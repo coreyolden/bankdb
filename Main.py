@@ -1,10 +1,20 @@
 import sys
+import string
+#import mysql.connector as dbconn
+import datetime
+import NewCustomer
+import Account
+# set up connection to server
+#db = dbconn.connect(host="localhost", \
+ #                user="root", passwd="root", db="northwind")
+#cursor = db.cursor()
+
 
 try:
     from Tkinter import *
 except ImportError:
     from tkinter import *
-
+from tkinter import messagebox
 try:
     import ttk
     py3 = 0
@@ -29,7 +39,7 @@ def create_Login(root, *args, **kwargs):
     rt = root
     w = Toplevel (root)
     top = Login (w)
-    _support.init(w, top, *args, **kwargs)
+    LoginSupport.init(w, top, *args, **kwargs)
     return (w, top)
 
 def destroy_Login():
@@ -39,6 +49,35 @@ def destroy_Login():
 
 
 class Login:
+
+    def createCustomer(self):
+        LoginSupport.destroy_window()
+        NewCustomer.vp_start_gui()
+
+
+
+    def LogSubmitFun(self):
+        #gets the account id and password
+        accountID = self.LogAccountBox.get()
+        pWord = self.LogPassBox.get()
+        if (len(accountID)>0 and len(pWord) > 0):
+
+
+          #  getpass = "Select password FROM customers WHERE customerid = %s" %\
+          #            (accountID)
+          #  cursor.execute(getpass)
+            preturn = "spagetti"
+          #  for password in cursor:
+           #     preturn = password
+            if (preturn == pWord):
+                #load mainpage
+                messagebox.showinfo("It Worked", "Congrats")
+            else:
+                messagebox.showinfo("Error", "That is not the proper password")
+        else:
+            messagebox.showinfo("Error", "Both password and accountID are required fields")
+
+
     def __init__(self, top=None):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
@@ -78,7 +117,7 @@ class Login:
         self.LogAccountLabel.place(relx=0.19, rely=0.16, height=18, width=69)
         self.LogAccountLabel.configure(activebackground="#68d9c3")
         self.LogAccountLabel.configure(background="#68d9c3")
-        self.LogAccountLabel.configure(text='''Account id''')
+        self.LogAccountLabel.configure(text='''Account ID''')
 
         self.LogPassLabel = Label(self.Frame1)
         self.LogPassLabel.place(relx=0.19, rely=0.26, height=18, width=66)
@@ -92,16 +131,28 @@ class Login:
         self.LogSubmitButton.configure(activebackground="#d9d9d9")
         self.LogSubmitButton.configure(background="#d9d91c")
         self.LogSubmitButton.configure(text='''Submit''')
-        self.LogSubmitButton.configure(command = LoginSupport.destroy_window)
+        self.LogSubmitButton.configure(command = self.LogSubmitFun)
+
+        self.LogMakeAccount = Button(self.Frame1)
+        self.LogMakeAccount.place(relx=0.19, rely=0.79, height=26, width=200)
+        self.LogMakeAccount.configure(activebackground="#d9d9d9")
+        self.LogMakeAccount.configure(background="#d9d91c")
+        self.LogMakeAccount.configure(text='''Forgot account ID?''')
 
         self.LogMakeAccount = Button(self.Frame1)
         self.LogMakeAccount.place(relx=0.19, rely=0.89, height=26, width=200)
         self.LogMakeAccount.configure(activebackground="#d9d9d9")
         self.LogMakeAccount.configure(background="#d9d91c")
         self.LogMakeAccount.configure(text='''Don't have an account?''')
+        self.LogMakeAccount.configure(command = self.createCustomer)
+
+
 
 
 
 
 if __name__ == '__main__':
     vp_start_gui()
+
+
+
