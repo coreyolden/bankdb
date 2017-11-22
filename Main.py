@@ -1,7 +1,10 @@
-from tkinter import *
-import string
-import mysql.connector as dbconn
-import datetime
+import sys
+
+try:
+    from Tkinter import *
+except ImportError:
+    from tkinter import *
+
 try:
     import ttk
     py3 = 0
@@ -9,60 +12,33 @@ except ImportError:
     import tkinter.ttk as ttk
     py3 = 1
 
-import Mainpage_support
+import LoginSupport
+
 def vp_start_gui():
     '''Starting point when module is the main routine.'''
     global val, w, root
     root = Tk()
-    top = Main_page (root)
-    Mainpage_support.init(root, top)
+    top = Login (root)
+    LoginSupport.init(root, top)
     root.mainloop()
 
 w = None
-def create_Main_page(root, *args, **kwargs):
+def create_Login(root, *args, **kwargs):
     '''Starting point when module is imported by another program.'''
     global w, w_win, rt
     rt = root
     w = Toplevel (root)
-    top = Main_page (w)
-    Mainpage_support.init(w, top, *args, **kwargs)
+    top = Login (w)
+    _support.init(w, top, *args, **kwargs)
     return (w, top)
 
-def destroy_Main_page():
+def destroy_Login():
     global w
     w.destroy()
     w = None
 
-# set up connection to server
-db = dbconn.connect(host="localhost", \
-                 user="root", passwd="root", db="bankdb")
-cursor = db.cursor()
 
-
-customerID =""
-customerPassword =""
-
-#
-#
-# class login(tk.Frame):
-#     def __init__(self,parent,controller):
-#         tk.Frame.__init__(self, parent)
-#         #need a button to add new account and a button + 2 textboxes
-#         #for password and login. call login when pressed and have an if
-#         #statement based off of the input. load mainPage if int is good.
-#
-#
-# class makeAccount(tk.Frame):
-#     def __init__(self,parent,controller):
-#         tk.Frame.__init__(self, parent)
-#         #ask for email address and password. pop up a new window with
-#         #the new customer id and an okay button that takes you back
-#         #to the login page.
-
-
-
-
-class Main_page:
+class Login:
     def __init__(self, top=None):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
@@ -71,102 +47,59 @@ class Main_page:
         _compcolor = '#d9d9d9' # X11 color: 'gray85'
         _ana1color = '#d9d9d9' # X11 color: 'gray85'
         _ana2color = '#d9d9d9' # X11 color: 'gray85'
-        font10 = "-family {DejaVu Sans} -size 9 -weight normal -slant "  \
-            "roman -underline 1 -overstrike 0"
-        font9 = "-family {DejaVu Sans} -size 15 -weight bold -slant "  \
-            "roman -underline 0 -overstrike 0"
 
-        top.geometry("1000x800+359+791")
-        top.title("Main page")
-        top.configure(background="#91d98c")
+        top.geometry("800x719+365+67")
+        top.title("Login")
+        top.configure(background="#93d993")
 
 
 
         self.Frame1 = Frame(top)
-        self.Frame1.place(relx=0.02, rely=0.09, relheight=0.62, relwidth=0.28)
+        self.Frame1.place(relx=0.29, rely=0.19, relheight=0.59, relwidth=0.39)
         self.Frame1.configure(relief=GROOVE)
         self.Frame1.configure(borderwidth="2")
         self.Frame1.configure(relief=GROOVE)
-        self.Frame1.configure(background="#FFFFFF")
-        self.Frame1.configure(width=275)
+        self.Frame1.configure(background="#68d9c3")
+        self.Frame1.configure(width=315)
 
-        self.makeAccountButton = Button(self.Frame1)
-        self.makeAccountButton.place(relx=0.11, rely=0.22, height=27, width=200)
-        self.makeAccountButton.configure(activebackground="#FFFFFF")
-        self.makeAccountButton.configure(activeforeground="#FFFFFF")
-        self.makeAccountButton.configure(background="#FFFFFF")
-        self.makeAccountButton.configure(relief=FLAT)
-        self.makeAccountButton.configure(text='''Make new account''')
+        self.LogAccountBox = Entry(self.Frame1)
+        self.LogAccountBox.place(relx=0.19, rely=0.21, relheight=0.05
+                , relwidth=0.46)
+        self.LogAccountBox.configure(background="white")
+        self.LogAccountBox.configure(font="TkFixedFont")
 
-        self.makePaymentButton = Button(self.Frame1)
-        self.makePaymentButton.place(relx=0.11, rely=0.3, height=27, width=200)
-        self.makePaymentButton.configure(activebackground="#FFFFFF")
-        self.makePaymentButton.configure(background="#FFFFFF")
-        self.makePaymentButton.configure(relief=FLAT)
-        self.makePaymentButton.configure(text='''Make Payment''')
+        self.LogPassBox = Entry(self.Frame1)
+        self.LogPassBox.place(relx=0.19, rely=0.31, relheight=0.05
+                , relwidth=0.46)
+        self.LogPassBox.configure(background="white")
+        self.LogPassBox.configure(font="TkFixedFont")
 
-        self.loanButton = Button(self.Frame1)
-        self.loanButton.place(relx=0.11, rely=0.38, height=27, width=200)
-        self.loanButton.configure(activebackground="#d9d9d9")
-        self.loanButton.configure(background="#FFFFFF")
-        self.loanButton.configure(relief=FLAT)
-        self.loanButton.configure(text='''Apply for a loan''')
+        self.LogAccountLabel = Label(self.Frame1)
+        self.LogAccountLabel.place(relx=0.19, rely=0.16, height=18, width=69)
+        self.LogAccountLabel.configure(activebackground="#68d9c3")
+        self.LogAccountLabel.configure(background="#68d9c3")
+        self.LogAccountLabel.configure(text='''Account id''')
 
-        self.Button4 = Button(self.Frame1)
-        self.Button4.place(relx=0.11, rely=0.91, height=27, width=200)
-        self.Button4.configure(activebackground="#d9d9d9")
-        self.Button4.configure(font=font10)
-        self.Button4.configure(text='''Sign out''')
+        self.LogPassLabel = Label(self.Frame1)
+        self.LogPassLabel.place(relx=0.19, rely=0.26, height=18, width=66)
+        self.LogPassLabel.configure(activebackground="#68d9c3")
+        self.LogPassLabel.configure(background="#68d9c3")
+        self.LogPassLabel.configure(text='''Password''')
+        self.LogPassLabel.configure(width=66)
 
-        self.Label1 = Label(self.Frame1)
-        self.Label1.place(relx=0.11, rely=0.08, height=19, width=200)
-        self.Label1.configure(background="#FFFFFF")
-        self.Label1.configure(font=font9)
-        self.Label1.configure(foreground="#ab0000")
-        self.Label1.configure(text='''Options''')
-        self.Label1.configure(width=176)
+        self.LogSubmitButton = Button(self.Frame1)
+        self.LogSubmitButton.place(relx=0.19, rely=0.38, height=26, width=70)
+        self.LogSubmitButton.configure(activebackground="#d9d9d9")
+        self.LogSubmitButton.configure(background="#d9d91c")
+        self.LogSubmitButton.configure(text='''Submit''')
+        self.LogSubmitButton.configure(command = LoginSupport.destroy_window)
 
-        self.listAccounts = Listbox(top)
-        self.listAccounts.place(relx=0.33, rely=0.05, relheight=0.91
-                , relwidth=0.64)
-        self.listAccounts.configure(background="white")
-        self.listAccounts.configure(font="TkFixedFont")
-        self.listAccounts.configure(width=644)
+        self.LogMakeAccount = Button(self.Frame1)
+        self.LogMakeAccount.place(relx=0.19, rely=0.89, height=26, width=200)
+        self.LogMakeAccount.configure(activebackground="#d9d9d9")
+        self.LogMakeAccount.configure(background="#d9d91c")
+        self.LogMakeAccount.configure(text='''Don't have an account?''')
 
-
-# #the view after you select the account
-# class inaccount(tk.Frame):
-#     def __init__(self,parent,controller):
-#         tk.Frame.__init__(self, parent)
-#         #display current balance as well as listing transactions
-#
-#
-# #the view inside the loans dialog.
-# class viewLoans(tk.Frame):
-#     def __init__(self,parent,controller):
-#         tk.Frame.__init__(self, parent)
-#         #things like pay loan, due date, past transactions, total amount.
-#
-
-
-
-#used when logging in, creating an account, or paying a bill.
-def verifyInteger(toCheck):
-    try:
-        toCheck=int(toCheck)
-        return 1
-    except:
-        return 0
-
-def logInButton(self):
-    # the login screen will have new account or log in buttons
-    #need to check if values must be passed or if this can get them from main.
-    sql = "SELECT * FROM customers WHERE customerid = %d AND customerpassword = %s" % \
-          (customerID, customerPassword)
-
-
-def onClickNewAccount(self):
-    #the login screen will have new account or log in buttons
 
 
 
