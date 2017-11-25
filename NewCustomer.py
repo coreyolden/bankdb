@@ -79,8 +79,8 @@ class NewCustomer:
         _ana1color = '#d9d9d9' # X11 color: 'gray85'
         _ana2color = '#d9d9d9' # X11 color: 'gray85'
 
-        top.geometry("800x719+342+33")
-        top.title("Update info")
+        top.geometry("800x719+365+67")
+        top.title("New Customer")
         top.configure(background="#93d993")
 
 

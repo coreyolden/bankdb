@@ -53,7 +53,7 @@ class Account:
         _ana1color = '#d9d9d9' # X11 color: 'gray85'
         _ana2color = '#d9d9d9' # X11 color: 'gray85'
 
-        top.geometry("800x719+187+24")
+        top.geometry("800x719+365+67")
         top.title("Account")
         top.configure(background="#93d993")
 

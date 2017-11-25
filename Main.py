@@ -4,6 +4,7 @@ import string
 import datetime
 import NewCustomer
 import Account
+import LandingPage
 # set up connection to server
 #db = dbconn.connect(host="localhost", \
  #                user="root", passwd="root", db="northwind")
@@ -72,10 +73,12 @@ class Login:
             if (preturn == pWord):
                 #load mainpage
                 messagebox.showinfo("It Worked", "Congrats")
+                LoginSupport.destroy_window()
+                LandingPage.vp_start_gui()
             else:
-                messagebox.showinfo("Error", "That is not the proper password")
+                messagebox.showerror("Error", "That password is invalid")
         else:
-            messagebox.showinfo("Error", "Both password and accountID are required fields")
+            messagebox.showerror("Error", "Both password and accountID are required fields")
 
 
     def __init__(self, top=None):
