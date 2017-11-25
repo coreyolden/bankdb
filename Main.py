@@ -1,14 +1,18 @@
 import sys
 import string
-#import mysql.connector as dbconn
+import MySQLdb
+db = MySQLdb.connect()
+
+
+
+
 import datetime
 import NewCustomer
-import Account
 import LandingPage
-# set up connection to server
-#db = dbconn.connect(host="localhost", \
- #                user="root", passwd="root", db="northwind")
-#cursor = db.cursor()
+ #set up connection to server
+db = MySQLdb.connect(host="localhost", \
+                user="root", passwd="oldenbec.09r", db="bankdb")
+cursor = db.cursor()
 
 
 try:
@@ -24,6 +28,9 @@ except ImportError:
     py3 = 1
 
 import LoginSupport
+
+table = str.maketrans(dict.fromkeys('(' ',)'))
+
 
 def vp_start_gui():
     '''Starting point when module is the main routine.'''
@@ -61,22 +68,43 @@ class Login:
         #gets the account id and password
         accountID = self.LogAccountBox.get()
         pWord = self.LogPassBox.get()
+
         if (len(accountID)>0 and len(pWord) > 0):
+            try:
+                accountID = int(accountID)
+            except:
+                messagebox.showerror("Error", "Account ID must be an Integer")
+                return
+
+            cusid = 0
+            sql="SELECT customerid FROM customers"
+            cursor.execute(sql)
+            for(custids) in cursor:
+                custids = str(custids)
+                custids = custids.translate(table)
+                custids = int(custids)
+
+                if(custids == accountID):
+                    cusid = 1
 
 
-          #  getpass = "Select password FROM customers WHERE customerid = %s" %\
-          #            (accountID)
-          #  cursor.execute(getpass)
-            preturn = "spagetti"
-          #  for password in cursor:
-           #     preturn = password
-            if (preturn == pWord):
-                #load mainpage
+            if (cusid == 0):
+                messagebox.showerror("Error", "That is not a account holder at our bank")
+                return
+
+            getpass = "Select customerid FROM customers WHERE customerid = %d AND password =%s" %\
+                      (accountID, pWord)
+            try:
+                cursor.execute(getpass)
+                # load mainpage
                 messagebox.showinfo("It Worked", "Congrats")
                 LoginSupport.destroy_window()
                 LandingPage.vp_start_gui()
-            else:
-                messagebox.showerror("Error", "That password is invalid")
+            except:
+                messagebox.showerror("Error", "The password is incorrect")
+                return
+
+
         else:
             messagebox.showerror("Error", "Both password and accountID are required fields")
 
@@ -93,6 +121,7 @@ class Login:
         top.geometry("800x719+365+67")
         top.title("Login")
         top.configure(background="#93d993")
+        root.resizable(False, False)
 
 
 

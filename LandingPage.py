@@ -1,5 +1,6 @@
 import sys
 import UpdateInfo
+import Account
 try:
     from Tkinter import *
 except ImportError:
@@ -14,7 +15,7 @@ except ImportError:
 
 import LoginSupport
 
-
+accountID = 0
 def vp_start_gui():
     '''Starting point when module is the main routine.'''
     global val, w, root
@@ -44,7 +45,9 @@ class LandingPage:
     def UpdateSettings(self):
         LoginSupport.destroy_window()
         UpdateInfo.vp_start_gui()
-
+    def NewAccount(self):
+        LandingPage.destroy_window()
+        Account.vp_start_gui()
     def killApp(self):
         messagebox.showinfo("note", "You have successfully signed out")
         LoginSupport.destroy_window()
@@ -83,6 +86,7 @@ class LandingPage:
         self.makeAccountButton.configure(background="#FFFFFF")
         self.makeAccountButton.configure(relief=FLAT)
         self.makeAccountButton.configure(text='''Make new account''')
+
 
         self.makePaymentButton = Button(self.Frame1)
         self.makePaymentButton.place(relx=0.18, rely=0.3, height=27, width=200)

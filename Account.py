@@ -56,6 +56,7 @@ class Account:
         top.geometry("800x719+365+67")
         top.title("Account")
         top.configure(background="#93d993")
+        root.resizable(False, False)
 
 
 

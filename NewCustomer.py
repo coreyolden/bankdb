@@ -19,6 +19,12 @@ except ImportError:
     py3 = 1
 
 import LoginSupport
+import MySQLdb
+db = MySQLdb.connect()
+ #set up connection to server
+db = MySQLdb.connect(host="localhost", \
+                user="root", passwd="oldenbec.09r", db="bankdb")
+cursor = db.cursor()
 
 def vp_start_gui():
     '''Starting point when module is the main routine.'''
@@ -44,6 +50,7 @@ def destroy_NewCustomer():
     w = None
 
 
+table = str.maketrans(dict.fromkeys('(' ',)'))
 class NewCustomer:
 
     def Submit(self):
@@ -61,14 +68,34 @@ class NewCustomer:
                     or len(passwordConf) == 0):
             print("stuff")
             messagebox.showinfo("Error", "No field can be left empty.")
+            return
         elif(password != passwordConf):
-            messagebox.showinfo("Error", "The passwords do not match.")
-        else:
-            # get highest customer id from database and increment it by one.
-            #assign them the new id and submit into sql the customer information with the new id.
-            #print message telling them what their id is
+            messagebox.showerror("Error", "The passwords do not match.")
+            return
+        # get highest customer id from database and increment it by one.
+        #assign them the new id and submit into sql the customer information with the new id.
+        #print message telling them what their id is
+        sql= "SELECT MAX(customerid) FROM customers"
+        highestid = 0
+        cursor.execute(sql)
+        for(custids) in cursor:
+            custids = str(custids)
+            custids = custids.translate(table)
+            custids = int(custids)
+            highestid = custids+1
+        sql = "INSERT INTO `customers` VALUES (%d,'%s','%s','%s','%s','%s','%s','%s','%s')" % \
+              (highestid, name, password, address, city, state, zip, country, phone)
+        print(sql)
+        highestid = str(highestid)
+        try:
+            cursor.execute(sql)
+            messagebox.showinfo("Congrats!","Your account number is "+highestid)
+            db.commit()
+            db.close()
             LoginSupport.destroy_window()
             Main.vp_start_gui()
+        except:
+            messagebox.showerror("Error", "There was an error. Account not created.")
 
     def __init__(self, top=None):
         '''This class configures and populates the toplevel window.
@@ -82,6 +109,7 @@ class NewCustomer:
         top.geometry("800x719+365+67")
         top.title("New Customer")
         top.configure(background="#93d993")
+        root.resizable(False, False)
 
 
 
@@ -148,7 +176,7 @@ class NewCustomer:
         self.Label1.configure(text='''Name''')
 
         self.Label2 = Label(top)
-        self.Label2.place(relx=0.1, rely=0.15, height=18, width=40)
+        self.Label2.place(relx=0.1, rely=0.15, height=18, width=60)
         self.Label2.configure(background="#93d993")
         self.Label2.configure(text='''Address''')
 

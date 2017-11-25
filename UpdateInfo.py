@@ -67,6 +67,11 @@ class UpdateInfo:
             # get highest customer id from database and increment it by one.
             #assign them the new id and submit into sql the customer information with the new id.
             #print message telling them what their id is
+            sql="UPDATE customer SET customername = '%s', password = '%s', address = " \
+                "'%s', city = '%s', state = '%s', zip = '%s' country = '%s' phone ='%s' WHERE customerid" \
+                "=%d"%\
+                (name, password, address, city, state, zip, country, phone, )
+            print(sql)
             messagebox.showinfo("note", "information successfully updated")
             LoginSupport.destroy_window()
             LandingPage.vp_start_gui()
@@ -150,7 +155,7 @@ class UpdateInfo:
         self.Label1.configure(text='''Name''')
 
         self.Label2 = Label(top)
-        self.Label2.place(relx=0.1, rely=0.15, height=18, width=40)
+        self.Label2.place(relx=0.1, rely=0.15, height=18, width=60)
         self.Label2.configure(background="#93d993")
         self.Label2.configure(text='''Address''')
 
