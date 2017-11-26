@@ -62,6 +62,9 @@ class LandingPage:
     def intoAccount(self,account):
         LoginSupport.destroy_window()
         Account.vp_start_gui(account, accountid)
+    def creditCard(self,account):
+        LoginSupport.destroy_window()
+        Creditcard.vp_start_gui(accountid)
 
 
     def __init__(self, top=None):
@@ -147,7 +150,7 @@ class LandingPage:
         self.CreditcardButton.configure(background="#FFFFFF")
         self.CreditcardButton.configure(relief=FLAT)
         self.CreditcardButton.configure(text='''Sign up for a credit card''')
-        self.CreditcardButton.configure(command=self.UpdateSettings)
+        self.CreditcardButton.configure(command=self.creditCard)
 
         self.settingButton = Button(self.Frame1)
         self.settingButton.place(relx=0.18, rely=0.62, height=27, width=200)
