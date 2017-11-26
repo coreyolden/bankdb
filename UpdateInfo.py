@@ -6,6 +6,13 @@
 import sys
 import LandingPage
 from tkinter import messagebox
+#set up connection to server
+import MySQLdb
+db = MySQLdb.connect()
+db = MySQLdb.connect(host="localhost", \
+                user="root", passwd="oldenbec.09r", db="bankdb")
+cursor = db.cursor()
+
 try:
     from Tkinter import *
 except ImportError:
@@ -19,9 +26,10 @@ except ImportError:
     py3 = 1
 
 import LoginSupport
-
-def vp_start_gui():
+def vp_start_gui(Accountid):
     '''Starting point when module is the main routine.'''
+    global accountid
+    accountid = Accountid
     global val, w, root
     root = Tk()
     top = UpdateInfo (root)
@@ -29,14 +37,15 @@ def vp_start_gui():
     root.mainloop()
 
 w = None
-def create_UpdateInfo(root, *args, **kwargs):
+def create_UpdateInfo(AccountID):
     '''Starting point when module is imported by another program.'''
-    global w, w_win, rt
-    rt = root
-    w = Toplevel (root)
-    top = UpdateInfo (w)
-    LoginSupport.init(w, top)
-    return (w, top)
+    global accountID
+    accountID = AccountID
+    global val, w, root
+    root = Tk()
+    top = UpdateInfo(root)
+    LoginSupport.init(root, top)
+    root.mainloop()
 
 def destroy_UpdateInfo():
     global w
@@ -45,6 +54,10 @@ def destroy_UpdateInfo():
 
 
 class UpdateInfo:
+
+    def returntolanding(self):
+        LoginSupport.destroy_window()
+        LandingPage.vp_start_gui(accountid)
 
     def Submit(self):
         name = self.SeNameBox.get()
@@ -56,6 +69,7 @@ class UpdateInfo:
         phone = self.SePhoneBox.get()
         password = self.SePassBox.get()
         passwordConf = self.SePassConfBox.get()
+        email = self.SeemailBox.get()
         if (len(name) == 0 or len(address) == 0 or len(city) == 0 or len(state) == 0 \
                     or len(zip) == 0 or len(country) == 0 or len(phone) == 0 or len(password) == 0 \
                     or len(passwordConf) == 0):
@@ -67,14 +81,20 @@ class UpdateInfo:
             # get highest customer id from database and increment it by one.
             #assign them the new id and submit into sql the customer information with the new id.
             #print message telling them what their id is
-            sql="UPDATE customer SET customername = '%s', password = '%s', address = " \
-                "'%s', city = '%s', state = '%s', zip = '%s' country = '%s' phone ='%s' WHERE customerid" \
+            sql="UPDATE customers SET customername = '%s', password = '%s', address = " \
+                "'%s', city = '%s', state = '%s', zip = '%s', country = '%s', phone ='%s',email ='%s' WHERE customerid" \
                 "=%d"%\
-                (name, password, address, city, state, zip, country, phone, )
+                (name, password, address, city, state, zip, country, phone,accountID, email )
             print(sql)
-            messagebox.showinfo("note", "information successfully updated")
-            LoginSupport.destroy_window()
-            LandingPage.vp_start_gui()
+            try:
+                cursor.execute(sql)
+                db.autocommit()
+                db.close()
+                messagebox.showinfo("note", "information successfully updated")
+                LoginSupport.destroy_window()
+                LandingPage.vp_start_gui(accountID)
+            except:
+                messagebox.showerror("Error", "information could not be updated")
 
 
     def __init__(self, top=None):
@@ -89,6 +109,7 @@ class UpdateInfo:
         top.geometry("800x719+365+67")
         top.title("Update info")
         top.configure(background="#93d993")
+        root.resizable(False, False)
 
 
 
@@ -112,25 +133,40 @@ class UpdateInfo:
         self.SeCityBox.configure(font="TkFixedFont")
         self.SeCityBox.configure(width=156)
 
+        self.SeStateBox = Entry(top)
+        self.SeStateBox.place(relx=0.33, rely=0.24, relheight=0.03
+                              , relwidth=0.07)
+        self.SeStateBox.configure(background="white")
+        self.SeStateBox.configure(font="TkFixedFont")
+        self.SeStateBox.configure(width=56)
+
         self.SeZipBox = Entry(top)
         self.SeZipBox.place(relx=0.43, rely=0.24, relheight=0.03, relwidth=0.11)
         self.SeZipBox.configure(background="white")
         self.SeZipBox.configure(font="TkFixedFont")
         self.SeZipBox.configure(width=86)
 
-        self.SeStateBox = Entry(top)
-        self.SeStateBox.place(relx=0.33, rely=0.24, relheight=0.03
-                , relwidth=0.07)
-        self.SeStateBox.configure(background="white")
-        self.SeStateBox.configure(font="TkFixedFont")
-        self.SeStateBox.configure(width=56)
+        self.SeCountryBox = Entry(top)
+        self.SeCountryBox.place(relx=0.57, rely=0.24, relheight=0.03
+                                , relwidth=0.18)
+        self.SeCountryBox.configure(background="white")
+        self.SeCountryBox.configure(font="TkFixedFont")
 
 
         self.SePhoneBox = Entry(top)
         self.SePhoneBox.place(relx=0.1, rely=0.32, relheight=0.03, relwidth=0.18)
-
         self.SePhoneBox.configure(background="white")
         self.SePhoneBox.configure(font="TkFixedFont")
+
+        self.SeemailBox = Entry(top)
+        self.SeemailBox.place(relx=0.33, rely=0.32, relheight=0.03, relwidth=0.18)
+        self.SeemailBox.configure(background="white")
+        self.SeemailBox.configure(font="TkFixedFont")
+
+        self.SePassBox = Entry(top)
+        self.SePassBox.place(relx=0.1, rely=0.38, relheight=0.03, relwidth=0.18)
+        self.SePassBox.configure(background="white")
+        self.SePassBox.configure(font="TkFixedFont")
 
         self.SePassConfBox = Entry(top)
         self.SePassConfBox.place(relx=0.1, rely=0.45, relheight=0.03
@@ -138,16 +174,9 @@ class UpdateInfo:
         self.SePassConfBox.configure(background="white")
         self.SePassConfBox.configure(font="TkFixedFont")
 
-        self.SeCountryBox = Entry(top)
-        self.SeCountryBox.place(relx=0.57, rely=0.24, relheight=0.03
-                , relwidth=0.18)
-        self.SeCountryBox.configure(background="white")
-        self.SeCountryBox.configure(font="TkFixedFont")
 
-        self.SePassBox = Entry(top)
-        self.SePassBox.place(relx=0.1, rely=0.38, relheight=0.03, relwidth=0.18)
-        self.SePassBox.configure(background="white")
-        self.SePassBox.configure(font="TkFixedFont")
+
+
 
         self.Label1 = Label(top)
         self.Label1.place(relx=0.1, rely=0.07, height=18, width=39)
@@ -184,6 +213,11 @@ class UpdateInfo:
         self.Label7.configure(background="#93d993")
         self.Label7.configure(text='''Phone''')
 
+        self.emaillabel = Label(top)
+        self.emaillabel.place(relx=0.33, rely=0.29, height=18, width=41)
+        self.emaillabel.configure(background="#93d993")
+        self.emaillabel.configure(text='''Email''')
+
         self.Label8 = Label(top)
         self.Label8.place(relx=0.1, rely=0.35, height=18, width=60)
         self.Label8.configure(background="#93d993")
@@ -196,10 +230,17 @@ class UpdateInfo:
 
         self.Button1 = Button(top)
         self.Button1.place(relx=0.1, rely=0.53, height=26, width=200)
-        self.Button1.configure(activebackground="#d9d91c")
+        self.Button1.configure(activebackground="#2cd900")
         self.Button1.configure(background="#2cd900")
         self.Button1.configure(text='''Submit''')
         self.Button1.configure(command= self.Submit)
+
+        self.cancel = Button(top)
+        self.cancel.place(relx=0.4, rely=0.53, height=26, width=200)
+        self.cancel.configure(activebackground="#f48042")
+        self.cancel.configure(background="#f48042")
+        self.cancel.configure(text='''cancel''')
+        self.cancel.configure(command= self.returntolanding)
 
 
 

@@ -1,18 +1,19 @@
 import sys
 import string
+#set up connection to server
 import MySQLdb
 db = MySQLdb.connect()
-
+db = MySQLdb.connect(host="localhost", \
+                user="root", passwd="oldenbec.09r", db="bankdb")
+cursor = db.cursor()
 
 
 
 import datetime
 import NewCustomer
 import LandingPage
- #set up connection to server
-db = MySQLdb.connect(host="localhost", \
-                user="root", passwd="oldenbec.09r", db="bankdb")
-cursor = db.cursor()
+
+
 
 
 try:
@@ -64,6 +65,7 @@ class Login:
 
 
 
+
     def LogSubmitFun(self):
         #gets the account id and password
         accountID = self.LogAccountBox.get()
@@ -92,17 +94,22 @@ class Login:
                 messagebox.showerror("Error", "That is not a account holder at our bank")
                 return
 
-            getpass = "Select customerid FROM customers WHERE customerid = %d AND password =%s" %\
+            getpass = "Select customerid FROM customers WHERE customerid = %d AND password ='%s'" %\
                       (accountID, pWord)
-            try:
-                cursor.execute(getpass)
+            cursor.execute(getpass)
+            passcorrect = 0
+            for (custids) in cursor:
+                passcorrect = passcorrect+1
+
+            if(passcorrect ==1):
                 # load mainpage
-                messagebox.showinfo("It Worked", "Congrats")
+                messagebox.showinfo("It Worked", "You successfully signed in")
                 LoginSupport.destroy_window()
-                LandingPage.vp_start_gui()
-            except:
+                LandingPage.vp_start_gui(accountID)
+            else:
                 messagebox.showerror("Error", "The password is incorrect")
                 return
+
 
 
         else:

@@ -4,7 +4,7 @@
 # In conjunction with Tcl version 8.6
 #    Nov 22, 2017 12:34:11 PM
 import sys
-
+import LandingPage
 try:
     from Tkinter import *
 except ImportError:
@@ -18,9 +18,18 @@ except ImportError:
     py3 = 1
 
 import LoginSupport
+import MySQLdb
+db = MySQLdb.connect()
+ #set up connection to server
+db = MySQLdb.connect(host="localhost", \
+                user="root", passwd="oldenbec.09r", db="bankdb")
+cursor = db.cursor()
 
-def vp_start_gui():
+def vp_start_gui(Accountnum, accountid):
     '''Starting point when module is the main routine.'''
+    global accountnum, accountID
+    accountID = accountid
+    accountnum = Accountnum
     global val, w, root
     root = Tk()
     top = Account (root)
@@ -44,6 +53,11 @@ def destroy_Account():
 
 
 class Account:
+
+    def returntolanding(self):
+        LoginSupport.destroy_window()
+        LandingPage.vp_start_gui(accountID)
+
     def __init__(self, top=None):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
@@ -62,9 +76,10 @@ class Account:
 
         self.AcBtnRet = Button(top)
         self.AcBtnRet.place(relx=0.03, rely=0.14, height=26, width=121)
-        self.AcBtnRet.configure(activebackground="#d9d9d9")
+        self.AcBtnRet.configure(activebackground="#2cd900")
         self.AcBtnRet.configure(background="#2cd900")
         self.AcBtnRet.configure(text='''Return to home''')
+        self.AcBtnRet.configure(command = self.returntolanding)
 
         self.AccListBox = Listbox(top)
         self.AccListBox.place(relx=0.01, rely=0.32, relheight=0.69
@@ -81,16 +96,27 @@ class Account:
         self.Frame1.configure(background="#68d9c3")
         self.Frame1.configure(width=775)
 
+        sql = "SELECT accountname, currentbalance FROM accounts WHERE accountnumber = %d" %\
+              (accountnum)
+        cursor.execute(sql)
+        name = ""
+        current = ""
+        for (accountname, balance) in cursor:
+
+            balance =str(balance)
+            name = accountname
+            current = "$"+balance
+
         self.AccMoneyLabel = Label(self.Frame1)
         self.AccMoneyLabel.place(relx=0.74, rely=0.4, height=18, width=200)
         self.AccMoneyLabel.configure(background="#68d9c3")
-        self.AccMoneyLabel.configure(text='''$0.00''')
+        self.AccMoneyLabel.configure(text=current)
         self.AccMoneyLabel.configure(width=106)
 
         self.AccNameLabel = Label(self.Frame1)
-        self.AccNameLabel.place(relx=0.39, rely=0.4, height=18, width=92)
+        self.AccNameLabel.place(relx=0.39, rely=0.4, height=18, width=200)
         self.AccNameLabel.configure(background="#68d9c3")
-        self.AccNameLabel.configure(text='''Account name''')
+        self.AccNameLabel.configure(text=name)
 
 
 

@@ -1,6 +1,7 @@
 import sys
 import UpdateInfo
 import Account
+
 try:
     from Tkinter import *
 except ImportError:
@@ -15,9 +16,16 @@ except ImportError:
 
 import LoginSupport
 
-accountID = 0
-def vp_start_gui():
+import MySQLdb
+db = MySQLdb.connect()
+db = MySQLdb.connect(host="localhost", \
+                user="root", passwd="oldenbec.09r", db="bankdb")
+cursor = db.cursor()
+
+def vp_start_gui(Accountid):
     '''Starting point when module is the main routine.'''
+    global accountid
+    accountid = Accountid
     global val, w, root
     root = Tk()
     top = LandingPage (root)
@@ -25,7 +33,7 @@ def vp_start_gui():
     root.mainloop()
 
 w = None
-def create_LandingPage(root, *args, **kwargs):
+def create_Login(root, *args, **kwargs):
     '''Starting point when module is imported by another program.'''
     global w, w_win, rt
     rt = root
@@ -34,7 +42,7 @@ def create_LandingPage(root, *args, **kwargs):
     LoginSupport.init(w, top, *args, **kwargs)
     return (w, top)
 
-def destroy_LandingPage():
+def destroy_Login():
     global w
     w.destroy()
     w = None
@@ -44,13 +52,17 @@ class LandingPage:
 
     def UpdateSettings(self):
         LoginSupport.destroy_window()
-        UpdateInfo.vp_start_gui()
+        UpdateInfo.vp_start_gui(accountid)
     def NewAccount(self):
-        LandingPage.destroy_window()
-        Account.vp_start_gui()
+        LoginSupport.destroy_window()
+        Account.vp_start_gui(accountid)
     def killApp(self):
         messagebox.showinfo("note", "You have successfully signed out")
         LoginSupport.destroy_window()
+    def intoAccount(self,account):
+        LoginSupport.destroy_window()
+        Account.vp_start_gui(account, accountid)
+
 
     def __init__(self, top=None):
         '''This class configures and populates the toplevel window.
@@ -68,8 +80,29 @@ class LandingPage:
         top.geometry("800x719+365+67")
         top.title("Main page")
         top.configure(background="#91d98c")
+        root.resizable(False, False)
+
+        sql = "SELECT accountname, accountnumber, currentbalance FROM customers NATURAL JOIN accounts WHERE customerid = %d" % \
+              (accountid)
+        cursor.execute(sql)
+        space = 0
+        for (accountname,account,  currentbalance) in cursor:
+
+            currentbalance = str(currentbalance)
 
 
+
+            self.loanButtons = Button(top)
+            texts = "%s          $%s" % \
+                    (accountname, currentbalance)
+            self.loanButtons.place(relx=0.48, rely=0.2+space, height=27, width=400)
+            self.loanButtons.configure(activebackground="#FFFFFF")
+            self.loanButtons.configure(activeforeground="#FFFFFF")
+            self.loanButtons.configure(background="#FFFFFF")
+            self.loanButtons.configure(relief=FLAT)
+            self.loanButtons.configure(text=texts, command=lambda account=account: self.intoAccount(account))
+            #self.loanbuttons.configure( command=lambda account=account: self.intoAccount(account))
+            space += .04
 
         self.Frame1 = Frame(top)
         self.Frame1.place(relx=0.03, rely=0.07, relheight=0.48, relwidth=0.43)
@@ -79,6 +112,8 @@ class LandingPage:
         self.Frame1.configure(background="#FFFFFF")
         self.Frame1.configure(width=275)
 
+
+
         self.makeAccountButton = Button(self.Frame1)
         self.makeAccountButton.place(relx=0.18, rely=0.22, height=27, width=200)
         self.makeAccountButton.configure(activebackground="#FFFFFF")
@@ -86,10 +121,11 @@ class LandingPage:
         self.makeAccountButton.configure(background="#FFFFFF")
         self.makeAccountButton.configure(relief=FLAT)
         self.makeAccountButton.configure(text='''Make new account''')
+        self.makeAccountButton.configure(command = self.NewAccount)
 
 
         self.makePaymentButton = Button(self.Frame1)
-        self.makePaymentButton.place(relx=0.18, rely=0.3, height=27, width=200)
+        self.makePaymentButton.place(relx=0.18, rely=0.32, height=27, width=200)
         self.makePaymentButton.configure(activebackground="#FFFFFF")
         self.makePaymentButton.configure(activeforeground="#FFFFFF")
         self.makePaymentButton.configure(background="#FFFFFF")
@@ -97,7 +133,7 @@ class LandingPage:
         self.makePaymentButton.configure(text='''Make Payment''')
 
         self.loanButton = Button(self.Frame1)
-        self.loanButton.place(relx=0.18, rely=0.38, height=27, width=200)
+        self.loanButton.place(relx=0.18, rely=0.42, height=27, width=200)
         self.loanButton.configure(activebackground="#FFFFFF")
         self.loanButton.configure(activeforeground="#FFFFFF")
         self.loanButton.configure(background="#FFFFFF")
@@ -105,7 +141,7 @@ class LandingPage:
         self.loanButton.configure(text='''Apply for a loan''')
 
         self.settingButton = Button(self.Frame1)
-        self.settingButton.place(relx=0.18, rely=0.46, height=27, width=200)
+        self.settingButton.place(relx=0.18, rely=0.52, height=27, width=200)
         self.settingButton.configure(activebackground="#FFFFFF")
         self.settingButton.configure(activeforeground="#FFFFFF")
         self.settingButton.configure(background="#FFFFFF")
@@ -128,16 +164,6 @@ class LandingPage:
         self.Label1.configure(foreground="#ab0000")
         self.Label1.configure(text='''Options''')
         self.Label1.configure(width=176)
-
-        self.listAccounts = Listbox(top)
-        self.listAccounts.place(relx=0.52, rely=0.04, relheight=0.7
-                , relwidth=.45)
-        self.listAccounts.configure(background="white")
-        self.listAccounts.configure(font="TkFixedFont")
-        self.listAccounts.configure(width=644)
-
-
-
 
 
 

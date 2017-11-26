@@ -53,6 +53,10 @@ def destroy_NewCustomer():
 table = str.maketrans(dict.fromkeys('(' ',)'))
 class NewCustomer:
 
+    def Cancel(self):
+        LoginSupport.destroy_window()
+        Main.vp_start_gui()
+
     def Submit(self):
         name = self.SeNameBox.get()
         address = self.SeAddressBox.get()
@@ -63,10 +67,11 @@ class NewCustomer:
         phone = self.SePhoneBox.get()
         password = self.SePassBox.get()
         passwordConf = self.SePassConfBox.get()
+        email = self.SeemailBox.get()
         if (len(name) == 0 or len(address) == 0 or len(city) == 0 or len(state) == 0 \
                     or len(zip) == 0 or len(country) == 0 or len(phone) == 0 or len(password) == 0 \
                     or len(passwordConf) == 0):
-            print("stuff")
+
             messagebox.showinfo("Error", "No field can be left empty.")
             return
         elif(password != passwordConf):
@@ -83,8 +88,8 @@ class NewCustomer:
             custids = custids.translate(table)
             custids = int(custids)
             highestid = custids+1
-        sql = "INSERT INTO `customers` VALUES (%d,'%s','%s','%s','%s','%s','%s','%s','%s')" % \
-              (highestid, name, password, address, city, state, zip, country, phone)
+        sql = "INSERT INTO `customers` VALUES (%d,'%s','%s','%s','%s','%s','%s','%s','%s','%s')" % \
+              (highestid, name, password, address, city, state, zip, country, phone, email)
         print(sql)
         highestid = str(highestid)
         try:
@@ -133,42 +138,45 @@ class NewCustomer:
         self.SeCityBox.configure(font="TkFixedFont")
         self.SeCityBox.configure(width=156)
 
+        self.SeStateBox = Entry(top)
+        self.SeStateBox.place(relx=0.33, rely=0.24, relheight=0.03, relwidth=0.07)
+        self.SeStateBox.configure(background="white")
+        self.SeStateBox.configure(font="TkFixedFont")
+        self.SeStateBox.configure(width=56)
+
         self.SeZipBox = Entry(top)
         self.SeZipBox.place(relx=0.43, rely=0.24, relheight=0.03, relwidth=0.11)
         self.SeZipBox.configure(background="white")
         self.SeZipBox.configure(font="TkFixedFont")
         self.SeZipBox.configure(width=86)
 
-        self.SeStateBox = Entry(top)
-        self.SeStateBox.place(relx=0.33, rely=0.24, relheight=0.03
-                , relwidth=0.07)
-        self.SeStateBox.configure(background="white")
-        self.SeStateBox.configure(font="TkFixedFont")
-        self.SeStateBox.configure(width=56)
-
+        self.SeCountryBox = Entry(top)
+        self.SeCountryBox.place(relx=0.57, rely=0.24, relheight=0.03, relwidth=0.18)
+        self.SeCountryBox.configure(background="white")
+        self.SeCountryBox.configure(font="TkFixedFont")
 
         self.SePhoneBox = Entry(top)
         self.SePhoneBox.place(relx=0.1, rely=0.32, relheight=0.03, relwidth=0.18)
-
         self.SePhoneBox.configure(background="white")
         self.SePhoneBox.configure(font="TkFixedFont")
 
-        self.SePassConfBox = Entry(top)
-        self.SePassConfBox.place(relx=0.1, rely=0.45, relheight=0.03
-                , relwidth=0.18)
-        self.SePassConfBox.configure(background="white")
-        self.SePassConfBox.configure(font="TkFixedFont")
-
-        self.SeCountryBox = Entry(top)
-        self.SeCountryBox.place(relx=0.57, rely=0.24, relheight=0.03
-                , relwidth=0.18)
-        self.SeCountryBox.configure(background="white")
-        self.SeCountryBox.configure(font="TkFixedFont")
+        self.SeemailBox = Entry(top)
+        self.SeemailBox.place(relx=0.33, rely=0.32, relheight=0.03, relwidth=0.18)
+        self.SeemailBox.configure(background="white")
+        self.SeemailBox.configure(font="TkFixedFont")
 
         self.SePassBox = Entry(top)
         self.SePassBox.place(relx=0.1, rely=0.38, relheight=0.03, relwidth=0.18)
         self.SePassBox.configure(background="white")
         self.SePassBox.configure(font="TkFixedFont")
+
+        self.SePassConfBox = Entry(top)
+        self.SePassConfBox.place(relx=0.1, rely=0.45, relheight=0.03, relwidth=0.18)
+        self.SePassConfBox.configure(background="white")
+        self.SePassConfBox.configure(font="TkFixedFont")
+
+
+
 
         self.Label1 = Label(top)
         self.Label1.place(relx=0.1, rely=0.07, height=18, width=39)
@@ -205,6 +213,11 @@ class NewCustomer:
         self.Label7.configure(background="#93d993")
         self.Label7.configure(text='''Phone''')
 
+        self.emaillabel = Label(top)
+        self.emaillabel.place(relx=0.33, rely=0.29, height=18, width=41)
+        self.emaillabel.configure(background="#93d993")
+        self.emaillabel.configure(text='''Email''')
+
         self.Label8 = Label(top)
         self.Label8.place(relx=0.1, rely=0.35, height=18, width=60)
         self.Label8.configure(background="#93d993")
@@ -221,6 +234,13 @@ class NewCustomer:
         self.Button1.configure(background="#2cd900")
         self.Button1.configure(text='''Submit''')
         self.Button1.configure(command= self.Submit)
+
+        self.cancel = Button(top)
+        self.cancel.place(relx=0.4, rely=0.53, height=26, width=200)
+        self.cancel.configure(activebackground="#f48042")
+        self.cancel.configure(background="#f48042")
+        self.cancel.configure(text='''Cancel''')
+        self.cancel.configure(command = self.Cancel)
 
 
 
