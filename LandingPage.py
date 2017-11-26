@@ -140,8 +140,17 @@ class LandingPage:
         self.loanButton.configure(relief=FLAT)
         self.loanButton.configure(text='''Apply for a loan''')
 
+        self.CreditcardButton = Button(self.Frame1)
+        self.CreditcardButton.place(relx=0.18, rely=0.52, height=27, width=200)
+        self.CreditcardButton.configure(activebackground="#FFFFFF")
+        self.CreditcardButton.configure(activeforeground="#FFFFFF")
+        self.CreditcardButton.configure(background="#FFFFFF")
+        self.CreditcardButton.configure(relief=FLAT)
+        self.CreditcardButton.configure(text='''Sign up for a credit card''')
+        self.CreditcardButton.configure(command=self.UpdateSettings)
+
         self.settingButton = Button(self.Frame1)
-        self.settingButton.place(relx=0.18, rely=0.52, height=27, width=200)
+        self.settingButton.place(relx=0.18, rely=0.62, height=27, width=200)
         self.settingButton.configure(activebackground="#FFFFFF")
         self.settingButton.configure(activeforeground="#FFFFFF")
         self.settingButton.configure(background="#FFFFFF")
