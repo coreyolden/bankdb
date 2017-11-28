@@ -1,6 +1,8 @@
 import sys
 import UpdateInfo
 import Account
+import RequestLoan
+import NewAccount
 
 try:
     from Tkinter import *
@@ -55,7 +57,7 @@ class LandingPage:
         UpdateInfo.vp_start_gui(accountid)
     def NewAccount(self):
         LoginSupport.destroy_window()
-        Account.vp_start_gui(accountid)
+        NewAccount.vp_start_gui(accountid)
     def killApp(self):
         messagebox.showinfo("note", "You have successfully signed out")
         LoginSupport.destroy_window()
@@ -65,6 +67,9 @@ class LandingPage:
     def creditCard(self,account):
         LoginSupport.destroy_window()
         Creditcard.vp_start_gui(accountid)
+    def loan(self):
+        LoginSupport.destroy_window()
+        RequestLoan.vp_start_gui(accountid)
 
 
     def __init__(self, top=None):
@@ -84,6 +89,14 @@ class LandingPage:
         top.title("Main page")
         top.configure(background="#91d98c")
         root.resizable(False, False)
+
+        self.Accountlabel = Label(top)
+        self.Accountlabel.place(relx=0.6, rely=0.15, height=19, width=200)
+        self.Accountlabel.configure(background="#FFFFFF")
+        self.Accountlabel.configure(font=font9)
+        self.Accountlabel.configure(foreground="#000000")
+        self.Accountlabel.configure(text='''Accounts''')
+        self.Accountlabel.configure(width=176)
 
         sql = "SELECT accountname, accountnumber, currentbalance FROM customers NATURAL JOIN accounts WHERE customerid = %d" % \
               (accountid)
@@ -105,6 +118,61 @@ class LandingPage:
             self.loanButtons.configure(relief=FLAT)
             self.loanButtons.configure(text=texts, command=lambda account=account: self.intoAccount(account))
             #self.loanbuttons.configure( command=lambda account=account: self.intoAccount(account))
+            space += .04
+
+        self.Loanslabel = Label(top)
+        self.Loanslabel.place(relx=0.6, rely=0.45, height=19, width=200)
+        self.Loanslabel.configure(background="#FFFFFF")
+        self.Loanslabel.configure(font=font9)
+        self.Loanslabel.configure(foreground="#000000")
+        self.Loanslabel.configure(text='''Loans''')
+        self.Loanslabel.configure(width=176)
+
+        sql = "SELECT loanname, accountnumber, ammountleft FROM customers NATURAL JOIN loans WHERE customerid = %d" % \
+              (accountid)
+        cursor.execute(sql)
+
+        space = 0
+        for (loanname, account, currentbalance) in cursor:
+            currentbalance = str(currentbalance)
+
+            self.loanButtons = Button(top)
+            texts = "%s          $%s" % \
+                    (loanname, currentbalance)
+            self.loanButtons.place(relx=0.48, rely=0.5 + space, height=27, width=400)
+            self.loanButtons.configure(activebackground="#FFFFFF")
+            self.loanButtons.configure(activeforeground="#FFFFFF")
+            self.loanButtons.configure(background="#FFFFFF")
+            self.loanButtons.configure(relief=FLAT)
+            self.loanButtons.configure(text=texts, command=lambda account=account: self.intoAccount(account))
+            # self.loanbuttons.configure( command=lambda account=account: self.intoAccount(account))
+            space += .04
+
+        self.Loanslabel = Label(top)
+        self.Loanslabel.place(relx=0.6, rely=0.8, height=19, width=200)
+        self.Loanslabel.configure(background="#FFFFFF")
+        self.Loanslabel.configure(font=font9)
+        self.Loanslabel.configure(foreground="#000000")
+        self.Loanslabel.configure(text='''Credit Cards''')
+        self.Loanslabel.configure(width=176)
+
+        sql = "SELECT accountname, accountnumber, currentbalance FROM customers NATURAL JOIN accounts WHERE customerid = %d" % \
+              (accountid)
+        cursor.execute(sql)
+        space = 0
+        for (accountname, account, currentbalance) in cursor:
+            currentbalance = str(currentbalance)
+
+            self.loanButtons = Button(top)
+            texts = "%s          $%s" % \
+                    (accountname, currentbalance)
+            self.loanButtons.place(relx=0.48, rely=0.85 + space, height=27, width=400)
+            self.loanButtons.configure(activebackground="#FFFFFF")
+            self.loanButtons.configure(activeforeground="#FFFFFF")
+            self.loanButtons.configure(background="#FFFFFF")
+            self.loanButtons.configure(relief=FLAT)
+            self.loanButtons.configure(text=texts, command=lambda account=account: self.intoAccount(account))
+            # self.loanbuttons.configure( command=lambda account=account: self.intoAccount(account))
             space += .04
 
         self.Frame1 = Frame(top)
@@ -142,6 +210,7 @@ class LandingPage:
         self.loanButton.configure(background="#FFFFFF")
         self.loanButton.configure(relief=FLAT)
         self.loanButton.configure(text='''Apply for a loan''')
+        self.loanButton.configure(command = self.loan)
 
         self.CreditcardButton = Button(self.Frame1)
         self.CreditcardButton.place(relx=0.18, rely=0.52, height=27, width=200)

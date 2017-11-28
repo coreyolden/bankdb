@@ -84,15 +84,15 @@ class UpdateInfo:
             sql="UPDATE customers SET customername = '%s', password = '%s', address = " \
                 "'%s', city = '%s', state = '%s', zip = '%s', country = '%s', phone ='%s',email ='%s' WHERE customerid" \
                 "=%d"%\
-                (name, password, address, city, state, zip, country, phone,accountID, email )
-            print(sql)
+                (name, password, address, city, state, zip, country, phone,email,accountid )
+
             try:
                 cursor.execute(sql)
-                db.autocommit()
+                db.commit()
                 db.close()
                 messagebox.showinfo("note", "information successfully updated")
                 LoginSupport.destroy_window()
-                LandingPage.vp_start_gui(accountID)
+                LandingPage.vp_start_gui(accountid)
             except:
                 messagebox.showerror("Error", "information could not be updated")
 

@@ -3,6 +3,14 @@
 # In conjunction with Tcl version 8.6
 #    Nov 26, 2017 12:02:50 AM
 import sys
+import Main
+import LoginSupport
+import MySQLdb
+from tkinter import messagebox
+db = MySQLdb.connect()
+db = MySQLdb.connect(host="localhost", \
+                user="root", passwd="oldenbec.09r", db="bankdb")
+cursor = db.cursor()
 
 try:
     from Tkinter import *
@@ -16,14 +24,13 @@ except ImportError:
     import tkinter.ttk as ttk
     py3 = 1
 
-import _support
 
 def vp_start_gui():
     '''Starting point when module is the main routine.'''
     global val, w, root
     root = Tk()
     top = ForgotInfo (root)
-    _support.init(root, top)
+    LoginSupport.init(root, top)
     root.mainloop()
 
 w = None
@@ -33,7 +40,7 @@ def create_ForgotInfo(root, *args, **kwargs):
     rt = root
     w = Toplevel (root)
     top = ForgotInfo (w)
-    _support.init(w, top, *args, **kwargs)
+    LoginSupport.init(w, top, *args, **kwargs)
     return (w, top)
 
 def destroy_ForgotInfo():
@@ -43,6 +50,27 @@ def destroy_ForgotInfo():
 
 
 class ForgotInfo:
+
+    def cancel(self):
+        LoginSupport.destroy_window()
+        Main.vp_start_gui()
+    def recover(self):
+        name = self.Namebox.get()
+        email = self.Emailbox.get()
+        sql = "SELECT customerid, password FROM customers WHERE customername = '%s' AND email = '%s'"%\
+              (name, email)
+        returninfo = 0
+        cursor.execute(sql)
+        for(id, password) in cursor:
+            returninfo = 1
+            name = str(id)
+            email = password
+        if (returninfo == 1):
+            messagebox.showinfo("Account info", "Your Account ID is: %s\nYour Password is: %s"%(name, email))
+            LoginSupport.destroy_window()
+            Main.vp_start_gui()
+        else:
+            messagebox.showinfo("Account info", "The information provided is incorrect")
     def __init__(self, top=None):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
@@ -52,27 +80,28 @@ class ForgotInfo:
         _ana1color = '#d9d9d9' # X11 color: 'gray85'
         _ana2color = '#d9d9d9' # X11 color: 'gray85'
 
-        top.geometry("800x719+713+91")
+        top.geometry("800x719+365+67")
         top.title("recover account")
         top.configure(background="#91d98c")
+        root.resizable(False, False)
 
 
 
-        self.Entry1 = Entry(top)
-        self.Entry1.place(relx=0.34, rely=0.29, relheight=0.04, relwidth=0.31)
-        self.Entry1.configure(background="white")
-        self.Entry1.configure(disabledforeground="#a3a3a3")
-        self.Entry1.configure(font="TkFixedFont")
-        self.Entry1.configure(foreground="#000000")
-        self.Entry1.configure(insertbackground="black")
+        self.Namebox = Entry(top)
+        self.Namebox.place(relx=0.34, rely=0.29, relheight=0.04, relwidth=0.31)
+        self.Namebox.configure(background="white")
+        self.Namebox.configure(disabledforeground="#a3a3a3")
+        self.Namebox.configure(font="TkFixedFont")
+        self.Namebox.configure(foreground="#000000")
+        self.Namebox.configure(insertbackground="black")
 
-        self.Entry2 = Entry(top)
-        self.Entry2.place(relx=0.34, rely=0.4, relheight=0.04, relwidth=0.31)
-        self.Entry2.configure(background="white")
-        self.Entry2.configure(disabledforeground="#a3a3a3")
-        self.Entry2.configure(font="TkFixedFont")
-        self.Entry2.configure(foreground="#000000")
-        self.Entry2.configure(insertbackground="black")
+        self.Emailbox = Entry(top)
+        self.Emailbox.place(relx=0.34, rely=0.4, relheight=0.04, relwidth=0.31)
+        self.Emailbox.configure(background="white")
+        self.Emailbox.configure(disabledforeground="#a3a3a3")
+        self.Emailbox.configure(font="TkFixedFont")
+        self.Emailbox.configure(foreground="#000000")
+        self.Emailbox.configure(insertbackground="black")
 
         self.Button1 = Button(top)
         self.Button1.place(relx=0.34, rely=0.49, height=42, width=138)
@@ -86,6 +115,20 @@ class ForgotInfo:
         self.Button1.configure(pady="0")
         self.Button1.configure(text='''Recover account''')
         self.Button1.configure(width=138)
+        self.Button1.configure(command = self.recover)
+
+        self.Button2 = Button(top)
+        self.Button2.place(relx=0.55, rely=0.49, height=42, width=138)
+        self.Button2.configure(activebackground="#f48042")
+        self.Button2.configure(background="#f48042")
+        self.Button2.configure(disabledforeground="#a3a3a3")
+        self.Button2.configure(foreground="#000000")
+        self.Button2.configure(highlightbackground="#f48042")
+        self.Button2.configure(highlightcolor="black")
+        self.Button2.configure(pady="0")
+        self.Button2.configure(text='''Cancel''')
+        self.Button2.configure(width=138)
+        self.Button2.configure(command=self.cancel)
 
         self.Label1 = Label(top)
         self.Label1.place(relx=0.34, rely=0.24, height=31, width=57)

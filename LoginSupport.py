@@ -19,6 +19,10 @@ except ImportError:
     import tkinter.ttk as ttk
     py3 = 1
 
+def set_Tk_var():
+    global Type
+    Type = StringVar()
+
 
 def init(top, gui, *args, **kwargs):
     global w, top_level, root

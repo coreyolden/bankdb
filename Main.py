@@ -12,7 +12,7 @@ cursor = db.cursor()
 import datetime
 import NewCustomer
 import LandingPage
-
+import ForgotInfo
 
 
 
@@ -63,7 +63,9 @@ class Login:
         LoginSupport.destroy_window()
         NewCustomer.vp_start_gui()
 
-
+    def recover(self):
+        LoginSupport.destroy_window()
+        ForgotInfo.vp_start_gui()
 
 
     def LogSubmitFun(self):
@@ -167,20 +169,21 @@ class Login:
 
         self.LogSubmitButton = Button(self.Frame1)
         self.LogSubmitButton.place(relx=0.19, rely=0.38, height=26, width=70)
-        self.LogSubmitButton.configure(activebackground="#d9d9d9")
+        self.LogSubmitButton.configure(activebackground="#d9d91c")
         self.LogSubmitButton.configure(background="#d9d91c")
         self.LogSubmitButton.configure(text='''Submit''')
         self.LogSubmitButton.configure(command = self.LogSubmitFun)
 
         self.LogMakeAccount = Button(self.Frame1)
         self.LogMakeAccount.place(relx=0.19, rely=0.79, height=26, width=200)
-        self.LogMakeAccount.configure(activebackground="#d9d9d9")
+        self.LogMakeAccount.configure(activebackground="#d9d91c")
         self.LogMakeAccount.configure(background="#d9d91c")
         self.LogMakeAccount.configure(text='''Forgot account ID?''')
+        self.LogMakeAccount.configure(command = self.recover)
 
         self.LogMakeAccount = Button(self.Frame1)
         self.LogMakeAccount.place(relx=0.19, rely=0.89, height=26, width=200)
-        self.LogMakeAccount.configure(activebackground="#d9d9d9")
+        self.LogMakeAccount.configure(activebackground="#d9d91c")
         self.LogMakeAccount.configure(background="#d9d91c")
         self.LogMakeAccount.configure(text='''Don't have an account?''')
         self.LogMakeAccount.configure(command = self.createCustomer)
