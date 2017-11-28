@@ -3,6 +3,7 @@ import UpdateInfo
 import Account
 import RequestLoan
 import NewAccount
+import Loan
 
 try:
     from Tkinter import *
@@ -64,6 +65,9 @@ class LandingPage:
     def intoAccount(self,account):
         LoginSupport.destroy_window()
         Account.vp_start_gui(account, accountid)
+    def intoloan(self,account):
+        LoginSupport.destroy_window()
+        Loan.vp_start_gui(account,accountid)
     def creditCard(self,account):
         LoginSupport.destroy_window()
         Creditcard.vp_start_gui(accountid)
@@ -134,6 +138,7 @@ class LandingPage:
 
         space = 0
         for (loanname, account, currentbalance) in cursor:
+            print(loanname, account, currentbalance)
             currentbalance = str(currentbalance)
 
             self.loanButtons = Button(top)
@@ -144,7 +149,7 @@ class LandingPage:
             self.loanButtons.configure(activeforeground="#FFFFFF")
             self.loanButtons.configure(background="#FFFFFF")
             self.loanButtons.configure(relief=FLAT)
-            self.loanButtons.configure(text=texts, command=lambda account=account: self.intoAccount(account))
+            self.loanButtons.configure(text=texts, command=lambda account=account: self.intoloan(account))
             # self.loanbuttons.configure( command=lambda account=account: self.intoAccount(account))
             space += .04
 
