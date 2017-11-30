@@ -88,6 +88,15 @@ class Account:
         self.AccListBox.configure(font="TkFixedFont")
         self.AccListBox.configure(width=774)
 
+        sql = "SELECT fromaccount, toaccount, transactiondate, ammount FROM Transactions WHERE fromaccount= %d OR toaccount = %d ORDER BY transactionnumber DESC" % \
+              (accountnum, accountnum)
+        print(sql)
+        cursor.execute(sql)
+        for (fromaccount, toaccount, transactiondate, amount) in cursor:
+
+            text = "From: " + fromaccount + " To: " + toaccount + " Date: " + str(transactiondate) + " Amount: $" + str(amount)
+            self.AccListBox.insert(END, text)
+
         self.Frame1 = Frame(top)
         self.Frame1.place(relx=0.01, rely=0.21, relheight=0.1, relwidth=0.97)
         self.Frame1.configure(relief=GROOVE)

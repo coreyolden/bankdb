@@ -126,12 +126,22 @@ class Login:
         _compcolor = '#d9d9d9' # X11 color: 'gray85'
         _ana1color = '#d9d9d9' # X11 color: 'gray85'
         _ana2color = '#d9d9d9' # X11 color: 'gray85'
+        font10 = "-family {DejaVu Sans} -size 20 -weight normal -slant " \
+                 "roman -underline 1 -overstrike 0"
 
         top.geometry("800x719+365+67")
+        root.resizable(False, False)
         top.title("Login")
         top.configure(background="#93d993")
-        root.resizable(False, False)
 
+
+        self.Label1 = Label(top)
+        self.Label1.place(relx=0.35, rely=0.0, height=130, width=200)
+        self.Label1.configure(background="#93d993")
+        self.Label1.configure(font=font10)
+        self.Label1.configure(foreground="#000000")
+        self.Label1.configure(text='''Options''')
+        self.Label1.configure(width=176)
 
 
         self.Frame1 = Frame(top)

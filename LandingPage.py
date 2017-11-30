@@ -4,6 +4,10 @@ import Account
 import RequestLoan
 import NewAccount
 import Loan
+import Main
+import CreditCard
+import RequestCC
+import MakePayment
 
 try:
     from Tkinter import *
@@ -45,7 +49,7 @@ def create_Login(root, *args, **kwargs):
     LoginSupport.init(w, top, *args, **kwargs)
     return (w, top)
 
-def destroy_Login():
+def destroy_LandingPage():
     global w
     w.destroy()
     w = None
@@ -61,7 +65,9 @@ class LandingPage:
         NewAccount.vp_start_gui(accountid)
     def killApp(self):
         messagebox.showinfo("note", "You have successfully signed out")
+        db.close()
         LoginSupport.destroy_window()
+        Main.vp_start_gui()
     def intoAccount(self,account):
         LoginSupport.destroy_window()
         Account.vp_start_gui(account, accountid)
@@ -70,11 +76,16 @@ class LandingPage:
         Loan.vp_start_gui(account,accountid)
     def creditCard(self,account):
         LoginSupport.destroy_window()
-        Creditcard.vp_start_gui(accountid)
+        CreditCard.vp_start_gui(account, accountid)
     def loan(self):
         LoginSupport.destroy_window()
         RequestLoan.vp_start_gui(accountid)
-
+    def Requestcc(self):
+        LoginSupport.destroy_window()
+        RequestCC.vp_start_gui(accountid)
+    def makepayment(self):
+        LoginSupport.destroy_window()
+        MakePayment.vp_start_gui(accountid)
 
     def __init__(self, top=None):
         '''This class configures and populates the toplevel window.
@@ -117,11 +128,10 @@ class LandingPage:
                     (accountname, currentbalance)
             self.loanButtons.place(relx=0.48, rely=0.2+space, height=27, width=400)
             self.loanButtons.configure(activebackground="#FFFFFF")
-            self.loanButtons.configure(activeforeground="#FFFFFF")
+            self.loanButtons.configure(activeforeground="#000000")
             self.loanButtons.configure(background="#FFFFFF")
             self.loanButtons.configure(relief=FLAT)
             self.loanButtons.configure(text=texts, command=lambda account=account: self.intoAccount(account))
-            #self.loanbuttons.configure( command=lambda account=account: self.intoAccount(account))
             space += .04
 
         self.Loanslabel = Label(top)
@@ -138,7 +148,6 @@ class LandingPage:
 
         space = 0
         for (loanname, account, currentbalance) in cursor:
-            print(loanname, account, currentbalance)
             currentbalance = str(currentbalance)
 
             self.loanButtons = Button(top)
@@ -146,11 +155,10 @@ class LandingPage:
                     (loanname, currentbalance)
             self.loanButtons.place(relx=0.48, rely=0.5 + space, height=27, width=400)
             self.loanButtons.configure(activebackground="#FFFFFF")
-            self.loanButtons.configure(activeforeground="#FFFFFF")
+            self.loanButtons.configure(activeforeground="#000000")
             self.loanButtons.configure(background="#FFFFFF")
             self.loanButtons.configure(relief=FLAT)
             self.loanButtons.configure(text=texts, command=lambda account=account: self.intoloan(account))
-            # self.loanbuttons.configure( command=lambda account=account: self.intoAccount(account))
             space += .04
 
         self.Loanslabel = Label(top)
@@ -161,27 +169,25 @@ class LandingPage:
         self.Loanslabel.configure(text='''Credit Cards''')
         self.Loanslabel.configure(width=176)
 
-        sql = "SELECT accountname, accountnumber, currentbalance FROM customers NATURAL JOIN accounts WHERE customerid = %d" % \
+        sql = "SELECT cardnumber, currentbalance FROM CreditCard WHERE customerid = %d" % \
               (accountid)
         cursor.execute(sql)
         space = 0
-        for (accountname, account, currentbalance) in cursor:
+        for (cardnumber, currentbalance) in cursor:
             currentbalance = str(currentbalance)
-
             self.loanButtons = Button(top)
             texts = "%s          $%s" % \
-                    (accountname, currentbalance)
+                    (cardnumber, currentbalance)
             self.loanButtons.place(relx=0.48, rely=0.85 + space, height=27, width=400)
             self.loanButtons.configure(activebackground="#FFFFFF")
-            self.loanButtons.configure(activeforeground="#FFFFFF")
+            self.loanButtons.configure(activeforeground="#000000")
             self.loanButtons.configure(background="#FFFFFF")
             self.loanButtons.configure(relief=FLAT)
-            self.loanButtons.configure(text=texts, command=lambda account=account: self.intoAccount(account))
-            # self.loanbuttons.configure( command=lambda account=account: self.intoAccount(account))
+            self.loanButtons.configure(text=texts, command=lambda account=cardnumber: self.creditCard(account))
             space += .04
 
         self.Frame1 = Frame(top)
-        self.Frame1.place(relx=0.03, rely=0.07, relheight=0.48, relwidth=0.43)
+        self.Frame1.place(relx=0.03, rely=0.2, relheight=0.48, relwidth=0.43)
         self.Frame1.configure(relief=GROOVE)
         self.Frame1.configure(borderwidth="2")
         self.Frame1.configure(relief=GROOVE)
@@ -193,7 +199,7 @@ class LandingPage:
         self.makeAccountButton = Button(self.Frame1)
         self.makeAccountButton.place(relx=0.18, rely=0.22, height=27, width=200)
         self.makeAccountButton.configure(activebackground="#FFFFFF")
-        self.makeAccountButton.configure(activeforeground="#FFFFFF")
+        self.makeAccountButton.configure(activeforeground="#000000")
         self.makeAccountButton.configure(background="#FFFFFF")
         self.makeAccountButton.configure(relief=FLAT)
         self.makeAccountButton.configure(text='''Make new account''')
@@ -203,15 +209,16 @@ class LandingPage:
         self.makePaymentButton = Button(self.Frame1)
         self.makePaymentButton.place(relx=0.18, rely=0.32, height=27, width=200)
         self.makePaymentButton.configure(activebackground="#FFFFFF")
-        self.makePaymentButton.configure(activeforeground="#FFFFFF")
+        self.makePaymentButton.configure(activeforeground="#000000")
         self.makePaymentButton.configure(background="#FFFFFF")
         self.makePaymentButton.configure(relief=FLAT)
         self.makePaymentButton.configure(text='''Make Payment''')
+        self.makePaymentButton.configure(command = self.makepayment)
 
         self.loanButton = Button(self.Frame1)
         self.loanButton.place(relx=0.18, rely=0.42, height=27, width=200)
         self.loanButton.configure(activebackground="#FFFFFF")
-        self.loanButton.configure(activeforeground="#FFFFFF")
+        self.loanButton.configure(activeforeground="#000000")
         self.loanButton.configure(background="#FFFFFF")
         self.loanButton.configure(relief=FLAT)
         self.loanButton.configure(text='''Apply for a loan''')
@@ -220,16 +227,16 @@ class LandingPage:
         self.CreditcardButton = Button(self.Frame1)
         self.CreditcardButton.place(relx=0.18, rely=0.52, height=27, width=200)
         self.CreditcardButton.configure(activebackground="#FFFFFF")
-        self.CreditcardButton.configure(activeforeground="#FFFFFF")
+        self.CreditcardButton.configure(activeforeground="#000000")
         self.CreditcardButton.configure(background="#FFFFFF")
         self.CreditcardButton.configure(relief=FLAT)
         self.CreditcardButton.configure(text='''Sign up for a credit card''')
-        self.CreditcardButton.configure(command=self.creditCard)
+        self.CreditcardButton.configure(command=self.Requestcc)
 
         self.settingButton = Button(self.Frame1)
         self.settingButton.place(relx=0.18, rely=0.62, height=27, width=200)
         self.settingButton.configure(activebackground="#FFFFFF")
-        self.settingButton.configure(activeforeground="#FFFFFF")
+        self.settingButton.configure(activeforeground="#000000")
         self.settingButton.configure(background="#FFFFFF")
         self.settingButton.configure(relief=FLAT)
         self.settingButton.configure(text='''Change settings''')

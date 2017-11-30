@@ -56,7 +56,8 @@ class Request_a_loan:
 
     def submit(self):
         name = self.Entry1.get()
-        initial = 16000
+        initial = self.Entry2.get()
+        initial = getdouble(initial)
         if(self.var1.get() ==1):
             sql = "SELECT MAX(accountnumber) FROM loans WHERE customerid = %d"%\
                   (accountid)
@@ -74,6 +75,109 @@ class Request_a_loan:
                   (accountid,loannumber,name,initial, initial)
             print(sql)
             cursor.execute(sql)
+            db.commit()
+            sql = "UPDATE loans SET paymentdue = DATE_ADD(paymentdue, INTERVAL 1 month ) WHERE acountnumber =%d" %\
+                  (loannumber)
+            db.commit()
+            db.close
+            LoginSupport.destroy_window()
+            LandingPage.vp_start_gui(accountid)
+        if (self.var1.get() == 2):
+            sql = "SELECT MAX(accountnumber) FROM loans WHERE customerid = %d" % \
+                  (accountid)
+            loannumber = 1
+            cursor.execute(sql)
+            for (number) in cursor:
+                number = str(number)
+                table = str.maketrans(dict.fromkeys('(' ',)'))
+                number = number.translate(table)
+                try:
+                    loannumber += int(number)
+                except:
+                    loannumber = 1;
+            sql = "INSERT INTO `loans` VALUES (%d, %d,'%s',4.5, %d,%d,NOW())" % \
+                  (accountid, loannumber, name, initial, initial)
+            print(sql)
+            cursor.execute(sql)
+            db.commit()
+            sql = "UPDATE loans SET paymentdue = DATE_ADD(paymentdue, INTERVAL 1 month ) WHERE acountnumber =%d" % \
+                  (loannumber)
+            db.commit()
+            db.close
+            LoginSupport.destroy_window()
+            LandingPage.vp_start_gui(accountid)
+        if (self.var1.get() == 3):
+            sql = "SELECT MAX(accountnumber) FROM loans WHERE customerid = %d" % \
+                  (accountid)
+            loannumber = 1
+            cursor.execute(sql)
+            for (number) in cursor:
+                number = str(number)
+                table = str.maketrans(dict.fromkeys('(' ',)'))
+                number = number.translate(table)
+                try:
+                    loannumber += int(number)
+                except:
+                    loannumber = 1;
+            sql = "INSERT INTO `loans` VALUES (%d, %d,'%s',90, %d,%d,NOW())" % \
+                  (accountid, loannumber, name, initial, initial)
+            print(sql)
+            cursor.execute(sql)
+            db.commit()
+            sql = "UPDATE loans SET paymentdue = DATE_ADD(paymentdue, INTERVAL 1 month ) WHERE acountnumber =%d" % \
+                  (loannumber)
+            db.commit()
+            db.close
+            LoginSupport.destroy_window()
+            LandingPage.vp_start_gui(accountid)
+        if (self.var1.get() == 4):
+            sql = "SELECT MAX(accountnumber) FROM loans WHERE customerid = %d" % \
+                  (accountid)
+            loannumber = 1
+            cursor.execute(sql)
+            for (number) in cursor:
+                number = str(number)
+                table = str.maketrans(dict.fromkeys('(' ',)'))
+                number = number.translate(table)
+                try:
+                    loannumber += int(number)
+                except:
+                    loannumber = 1;
+            sql = "INSERT INTO `loans` VALUES (%d, %d,'%s',30, %d,%d,NOW())" % \
+                  (accountid, loannumber, name, initial, initial)
+            print(sql)
+            cursor.execute(sql)
+            db.commit()
+            sql = "UPDATE loans SET paymentdue = DATE_ADD(paymentdue, INTERVAL 1 month ) WHERE acountnumber =%d" % \
+                  (loannumber)
+            db.commit()
+            db.close
+            LoginSupport.destroy_window()
+            LandingPage.vp_start_gui(accountid)
+        if (self.var1.get() == 5):
+            sql = "SELECT MAX(accountnumber) FROM loans WHERE customerid = %d" % \
+                  (accountid)
+            loannumber = 1
+            cursor.execute(sql)
+            for (number) in cursor:
+                number = str(number)
+                table = str.maketrans(dict.fromkeys('(' ',)'))
+                number = number.translate(table)
+                try:
+                    loannumber += int(number)
+                except:
+                    loannumber = 1;
+            sql = "INSERT INTO `loans` VALUES (%d, %d,'%s',.04, %d,%d,NOW())" % \
+                  (accountid, loannumber, name, initial, initial)
+            print(sql)
+            cursor.execute(sql)
+            db.commit()
+            sql = "UPDATE loans SET paymentdue = DATE_ADD(paymentdue, INTERVAL 1 month ) WHERE acountnumber =%d" % \
+                  (loannumber)
+            db.commit()
+            db.close
+            LoginSupport.destroy_window()
+            LandingPage.vp_start_gui(accountid)
 
 
     def __init__(self, top=None):
@@ -113,8 +217,23 @@ class Request_a_loan:
         self.Label1.configure(foreground="#000000")
         self.Label1.configure(text='''Name of loan''')
 
+        self.Label2 = Label(top)
+        self.Label2.place(relx=0.46, rely=0.4, height=31, width=114)
+        self.Label2.configure(background="#93d993")
+        self.Label2.configure(disabledforeground="#a3a3a3")
+        self.Label2.configure(foreground="#000000")
+        self.Label2.configure(text='''Loan amount''')
+
+        self.Entry2 = Entry(top)
+        self.Entry2.place(relx=0.46, rely=0.45, relheight=0.04, relwidth=0.31)
+        self.Entry2.configure(background="white")
+        self.Entry2.configure(disabledforeground="#a3a3a3")
+        self.Entry2.configure(font="TkFixedFont")
+        self.Entry2.configure(foreground="#000000")
+        self.Entry2.configure(insertbackground="black")
+
         self.Button1 = Button(top)
-        self.Button1.place(relx=0.46, rely=0.45, height=42, width=72)
+        self.Button1.place(relx=0.46, rely=0.5, height=42, width=72)
         self.Button1.configure(activebackground="#2cd900")
         self.Button1.configure(activeforeground="#000000")
         self.Button1.configure(background="#2cd900")
@@ -127,7 +246,7 @@ class Request_a_loan:
         self.Button1.configure(command = self.submit)
 
         self.Button2 = Button(top)
-        self.Button2.place(relx=0.59, rely=0.45, height=42, width=66)
+        self.Button2.place(relx=0.59, rely=0.5, height=42, width=66)
         self.Button2.configure(activebackground="#f48042")
         self.Button2.configure(activeforeground="#000000")
         self.Button2.configure(background="#f48042")
@@ -256,7 +375,7 @@ class Request_a_loan:
         self.Message1.configure(highlightbackground="#d9d9d9")
         self.Message1.configure(highlightcolor="black")
         self.Message1.configure(text='''Vehicle loans are now as low as 9.5%
-for a new vehicle loan and 9.5% for a used vehicle loan''')
+for a new vehicle loan and 4.5% for a used vehicle loan''')
         self.Message1.configure(width=392)
 
         self.Message2 = Message(self.TNotebook1_t1)
